@@ -1,5 +1,7 @@
 using MySql.Data.MySqlClient;
 using Database.Repositorios.Interfaces;
+using Database.Atributos;
+using System.Reflection;
 
 namespace Database.Repositorios;
 
@@ -8,6 +10,26 @@ public class Repositorio<T> : IRepositorio<T>
 
     private readonly string? conexao = Environment.GetEnvironmentVariable("DATABASE_URL"); // chamada de string de conexão chumbada no código.
 
+    private string NomeDaTabela()
+    {
+        var nome = typeof(T).Name.ToLower() + "s";
+        TabelaAttribute? tabelaAttr = (TabelaAttribute?)typeof(T).GetCustomAttributes(typeof(TabelaAttribute));
+        if(tabelaAttr != null)
+        {
+            nome = tabelaAttr.Nome;
+        }
+
+        return nome;
+    }
+    private string NomeDaPropriedade(PropertyInfo prop)
+    {
+        var nome = prop.Name.ToLower();
+        ColunaAttribute? colunaAttr = (ColunaAttribute?)typeof(T).GetCustomAttributes(typeof(ColunaAttribute));
+        if(colunaAttr != null)
+            nome = colunaAttr.Nome;
+ 
+        return nome;
+    }
     //métodos
     public void Salvar(T obj)
     {
@@ -21,20 +43,21 @@ public class Repositorio<T> : IRepositorio<T>
         List<string> updateArray = new List<string>();
         foreach(var prop in typeof(T).GetProperties())
         {
-            if(prop.Name == "Id") continue;
-            colunasArray.Add(prop.Name);
+            var nome = this.NomeDaPropriedade(prop);
+            if(nome == "Id") continue;
+            colunasArray.Add(nome);
             valoresArray.Add($"'{prop.GetValue(obj)}'");
-            updateArray.Add($"${prop.Name}='{prop.GetValue(obj)}'");
+            updateArray.Add($"${nome}='{prop.GetValue(obj)}'");
         }
         var colunas = string.Join(",", colunasArray.ToArray());
         var valores = string.Join(",", valoresArray.ToArray());
         var update = string.Join(",", updateArray.ToArray());
         
-        var query = $"insert into {typeof(T).Name.ToLower()}s ({colunas})values({valores});";
+        var query = $"insert into {this.NomeDaTabela()} ({colunas})values({valores});";
 
         var id = Convert.ToInt32(typeof(T).GetProperty("Id")?.GetValue(obj));
         if(id > 0)
-        query = $"update {typeof(T).Name.ToLower()}s set {update} where id='{id}';";
+        query = $"update {this.NomeDaTabela()} set {update} where id='{id}';";
 
         var command = new MySqlCommand(query, conn);
         command.ExecuteNonQuery();
@@ -46,6 +69,7 @@ public class Repositorio<T> : IRepositorio<T>
         }
     }
 
+
     public List<T> BuscaPorIdOuEmail(string idOuEmail)
     {
         var clientes = new List<T>();
@@ -53,7 +77,7 @@ public class Repositorio<T> : IRepositorio<T>
         {
         conn.Open(); //quando é feito um Open, se abre a conexao com o banco de dados
 
-        var query = $"select * from {typeof(T).Name.ToLower()}s where id = '{idOuEmail}' or email like '%{idOuEmail}%'";
+        var query = $"select * from {this.NomeDaTabela()} where id = '{idOuEmail}' or email like '%{idOuEmail}%'";
 
         var command = new MySqlCommand(query, conn);
         var dataReader = command.ExecuteReader();
@@ -87,7 +111,7 @@ public class Repositorio<T> : IRepositorio<T>
         {
         conn.Open(); //quando é feito um Open, se abre a conexao com o banco de dados
         
-        var query = $"delete from {typeof(T).Name.ToLower()}s where id = {id};";
+        var query = $"delete from {this.NomeDaTabela()} where id = {id};";
 
         var command = new MySqlCommand(query, conn);
         command.ExecuteNonQuery();
