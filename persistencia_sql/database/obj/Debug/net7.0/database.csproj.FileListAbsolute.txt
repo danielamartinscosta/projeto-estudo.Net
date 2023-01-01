@@ -1,0 +1,12 @@
+F:\diversos.dotnet\persistencia_sql\database\obj\Debug\net7.0\database.csproj.AssemblyReference.cache
+F:\diversos.dotnet\persistencia_sql\database\obj\Debug\net7.0\database.GeneratedMSBuildEditorConfig.editorconfig
+F:\diversos.dotnet\persistencia_sql\database\obj\Debug\net7.0\database.AssemblyInfoInputs.cache
+F:\diversos.dotnet\persistencia_sql\database\obj\Debug\net7.0\database.AssemblyInfo.cs
+F:\diversos.dotnet\persistencia_sql\database\obj\Debug\net7.0\database.csproj.CoreCompileInputs.cache
+F:\diversos.dotnet\persistencia_sql\database\bin\Debug\net7.0\database.deps.json
+F:\diversos.dotnet\persistencia_sql\database\bin\Debug\net7.0\database.dll
+F:\diversos.dotnet\persistencia_sql\database\bin\Debug\net7.0\database.pdb
+F:\diversos.dotnet\persistencia_sql\database\obj\Debug\net7.0\database.dll
+F:\diversos.dotnet\persistencia_sql\database\obj\Debug\net7.0\refint\database.dll
+F:\diversos.dotnet\persistencia_sql\database\obj\Debug\net7.0\database.pdb
+F:\diversos.dotnet\persistencia_sql\database\obj\Debug\net7.0\ref\database.dll
